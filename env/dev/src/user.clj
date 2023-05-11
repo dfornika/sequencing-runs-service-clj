@@ -1,10 +1,14 @@
 (ns user
-  (:require [ragtime.jdbc]
+  (:require [clojure.java.io :as io]
+            [clojure.pprint :refer [pprint]]
+            [ragtime.jdbc]
             [ragtime.repl]
             [integrant.repl]
             [integrant.core]
+            [cheshire.core :as json]
             [ca.bccdc-phl.sequencing-runs.config :as config]
-            [ca.bccdc-phl.sequencing-runs.system :as system]))
+            [ca.bccdc-phl.sequencing-runs.system :as system]
+            [ca.bccdc-phl.sequencing-runs.crud :as crud]))
 
 (def config-path "dev-config.edn")
 
@@ -32,6 +36,17 @@
 (def reset-all integrant.repl/reset-all)
 
 
+(def dev-instruments-illumina
+  (-> (io/resource "illumina_instruments.json")
+      (slurp)
+      (json/parse-string true)))
+
+(defn create-instruments-illumina
+  ""
+  [instruments]
+  (let [ds (get integrant.repl.state/system :ca.bccdc-phl.sequencing-runs.system/db)]
+    (doseq [instrument instruments]
+      (crud/create ds :sequencing_instrument_illumina :instrument_id instrument))))
 
 (comment
   (ragtime.repl/migrate ragtime-config)
@@ -41,4 +56,6 @@
   (halt)
   (reset)
   (reset-all)
+
+  (create-instruments-illumina dev-instruments-illumina)
   )

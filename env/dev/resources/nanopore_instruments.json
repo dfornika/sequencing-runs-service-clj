@@ -1,0 +1,4 @@
+[
+  {"instrument_id": "GXB03845", "type": "NANOPORE", "model": "GRIDION"},
+  {"instrument_id": "P2S_0002-2", "type": "NANOPORE", "model": "PROMETHION"}
+]
