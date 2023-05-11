@@ -1,1 +1,1 @@
-# clj-service-template
+# sequencing-runs-service
