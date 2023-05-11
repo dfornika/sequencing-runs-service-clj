@@ -1,0 +1,22 @@
+CREATE TABLE sequencing_run_illumina (
+  id SERIAL PRIMARY KEY,
+  sequencing_run_id VARCHAR(255) NOT NULL,
+  flowcell_id VARCHAR(255),
+  instrument_id VARCHAR(255),
+  experiment_name VARCHAR(255),
+  run_date DATE,
+  cluster_count INTEGER,
+  cluster_count_passed_filter INTEGER,
+  error_rate FLOAT,
+  first_cycle_intensity FLOAT,
+  num_cycles_r1 INTEGER,
+  num_cycles_r2 INTEGER,
+  num_reads INTEGER,
+  num_reads_passed_filter INTEGER,
+  percent_aligned FLOAT,
+  percent_clusters_passed_filter FLOAT,
+  percent_occupied FLOAT,
+  percent_reads_passed_filter FLOAT,
+  q30_percent FLOAT,
+  yield_gigabases FLOAT
+);
