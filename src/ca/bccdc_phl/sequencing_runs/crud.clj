@@ -17,7 +17,7 @@
         (jdbc/execute! datasource))))
 
 
-(defn create
+(defn create!
   ""
   [datasource table id-key entity]
   (let [entity-id (get entity id-key)
@@ -32,13 +32,13 @@
            (jdbc/execute! datasource)))))
 
 
-(defn update
+(defn update!
   ""
   [datasource table id-key entity]
   )
 
 
-(defn delete
+(defn delete!
   ""
   [datasource table id-key id]
   (->> {:delete-from [table]

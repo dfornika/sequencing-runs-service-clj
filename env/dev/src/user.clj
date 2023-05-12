@@ -46,14 +46,14 @@
   [instruments]
   (let [ds (get integrant.repl.state/system :ca.bccdc-phl.sequencing-runs.system/db)]
     (doseq [instrument instruments]
-      (crud/create ds :sequencing_instrument_illumina :instrument_id instrument))))
+      (crud/create! ds :sequencing_instrument_illumina :instrument_id instrument))))
 
 (defn delete-instruments-illumina
   ""
   [instruments]
   (let [ds (get integrant.repl.state/system :ca.bccdc-phl.sequencing-runs.system/db)]
     (doseq [instrument instruments]
-      (crud/delete ds :sequencing_instrument_illumina :instrument_id (:instrument_id instrument)))))
+      (crud/delete! ds :sequencing_instrument_illumina :instrument_id (:instrument_id instrument)))))
 
 
 
