@@ -48,6 +48,15 @@
     (doseq [instrument instruments]
       (crud/create ds :sequencing_instrument_illumina :instrument_id instrument))))
 
+(defn delete-instruments-illumina
+  ""
+  [instruments]
+  (let [ds (get integrant.repl.state/system :ca.bccdc-phl.sequencing-runs.system/db)]
+    (doseq [instrument instruments]
+      (crud/delete ds :sequencing_instrument_illumina :instrument_id (:instrument_id instrument)))))
+
+
+
 (comment
   (ragtime.repl/migrate ragtime-config)
   (ragtime.repl/rollback ragtime-config)
@@ -58,4 +67,6 @@
   (reset-all)
 
   (create-instruments-illumina dev-instruments-illumina)
+  (delete-instruments-illumina dev-instruments-illumina)
+
   )

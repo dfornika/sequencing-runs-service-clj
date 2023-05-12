@@ -32,12 +32,16 @@
            (jdbc/execute! datasource)))))
 
 
-
 (defn update
   ""
   [datasource table id-key entity]
   )
 
+
 (defn delete
   ""
-  [datasource table id])
+  [datasource table id-key id]
+  (->> {:delete-from [table]
+        :where [:= id-key id]}
+       (sql/format)
+       (jdbc/execute! datasource)))
