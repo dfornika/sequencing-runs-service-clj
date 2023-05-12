@@ -1,6 +1,0 @@
-[
-  {"instrument_id": "M00123", "type": "ILLUMINA", "model": "MISEQ"},
-  {"instrument_id": "M00456", "type": "ILLUMINA", "model": "MISEQ"},
-  {"instrument_id": "VH00123", "type": "ILLUMINA", "model": "NEXTSEQ"},
-  {"instrument_id": "VH00456", "type": "ILLUMINA", "model": "NEXTSEQ"}
-]

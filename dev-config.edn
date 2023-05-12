@@ -1,4 +1,0 @@
-{:server {:port 8080}
- :db {:connection-uri "jdbc:postgresql://localhost:5432/sequencing_runs_clj"
-      :user "sequencingruns"
-      :password "sequencingruns"}}
