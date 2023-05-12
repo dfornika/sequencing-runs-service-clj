@@ -1,1 +1,1 @@
-clj -X:codox
+clojure -X:codox
