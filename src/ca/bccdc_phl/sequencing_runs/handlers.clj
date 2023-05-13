@@ -16,7 +16,10 @@
   ""
   [db request]
   (let [instruments (crud/read db :sequencing_instrument_illumina)]
-    (response instruments)))
+    (->> instruments
+         (map #(update-keys % (comp keyword name)))
+         (map #(dissoc % :id))
+         (response))))
 
 
 (defn create-instrument-illumina
@@ -32,7 +35,10 @@
   ""
   [db request]
   (let [instruments (crud/read db :sequencing_instrument_nanopore)]
-    (response instruments)))
+    (->> instruments
+         (map #(update-keys % (comp keyword name)))
+         (map #(dissoc % :id))
+         (response))))
 
 
 (defn create-instrument-nanopore
