@@ -1,1 +1,3 @@
-clj -T:build uber
+#!/bin/bash
+
+clojure -T:build uber
