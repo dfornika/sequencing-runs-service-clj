@@ -42,6 +42,10 @@ jobs:
     - name: Download OpenAPI schema
       run: |
         wget https://raw.githubusercontent.com/dfornika/genomics-services-api-schemas/main/schemas/sequencing-runs-service.yaml
+    - name: Test API
+      uses: schemathesis/action@v1
+      with:
+        schema: ./sequencing-runs-service.yaml
     - name: Collect Artifacts
       run: |
         mkdir artifacts
