@@ -35,7 +35,7 @@ jobs:
         ./sequencing-runs-db/.github/scripts/install_flyway.sh
     - name: Flyway Migrate
       run: >-
-        ./sequencing-runs-db/.github/scripts/apply_migrations.sh
+        .github/scripts/apply_migrations.sh
     - name: Build uberjar
       run: >-
         ./scripts/build.sh
