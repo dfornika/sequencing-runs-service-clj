@@ -1,8 +1,11 @@
 name: "Test API"
 on: 
   push:
-     branches:
-       - main
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -36,4 +39,7 @@ jobs:
     - name: Build uberjar
       run: >-
         ./scripts/build.sh
+    - name: Download OpenAPI schema
+      run: >-
+        wget https://raw.githubusercontent.com/dfornika/genomics-services-api-schemas/main/schemas/sequencing-runs-service.yaml
 
