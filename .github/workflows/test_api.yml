@@ -25,21 +25,29 @@ jobs:
     - name: Setup PostgreSQL
       uses: ikalnytskyi/action-setup-postgres@v4
     - name: Clone sequencing-runs-db repo
-      run: >-
+      run: |
         git clone https://github.com/dfornika/sequencing-runs-db.git
     - name: Create Database
-      run: >-
+      run: |
         .github/scripts/create_database.sh
     - name: Setup Flyway
-      run: >-
+      run: |
         ./sequencing-runs-db/.github/scripts/install_flyway.sh
     - name: Flyway Migrate
-      run: >-
+      run: |
         .github/scripts/apply_migrations.sh
     - name: Build uberjar
-      run: >-
+      run: |
         ./scripts/build.sh
     - name: Download OpenAPI schema
-      run: >-
+      run: |
         wget https://raw.githubusercontent.com/dfornika/genomics-services-api-schemas/main/schemas/sequencing-runs-service.yaml
-
+    - name: Collect Artifacts
+      run: |
+        mkdir artifacts
+        cp report.html artifacts/migration-report.html
+        cp report.json artifacts/migration-report.json
+    - uses: actions/upload-artifact@v1
+      with:
+        name: artifacts
+        path: artifacts
