@@ -18,5 +18,6 @@ CREATE TABLE sequencing_run_illumina (
   percent_occupied FLOAT,
   percent_reads_passed_filter FLOAT,
   q30_percent FLOAT,
+  projected_yield_gigabases FLOAT,
   yield_gigabases FLOAT
 );
