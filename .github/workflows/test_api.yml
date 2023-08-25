@@ -29,7 +29,7 @@ jobs:
         git clone https://github.com/dfornika/sequencing-runs-db.git
     - name: Create Database
       run: >-
-        ./sequencing-runs-db/.github/scripts/create_database.sh
+        .github/scripts/create_database.sh
     - name: Setup Flyway
       run: >-
         ./sequencing-runs-db/.github/scripts/install_flyway.sh
