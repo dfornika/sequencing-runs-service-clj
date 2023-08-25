@@ -1,0 +1,39 @@
+name: "Test API"
+on: 
+  push:
+     branches:
+       - main
+  workflow_dispatch:
+
+jobs:
+  test_api:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Prepare java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+    - name: Install clojure tools
+      uses: DeLaGuardo/setup-clojure@10.3
+      with:
+        cli: 1.10.3.1075
+    - name: Setup PostgreSQL
+      uses: ikalnytskyi/action-setup-postgres@v4
+    - name: Clone sequencing-runs-db repo
+      run: >-
+        git clone https://github.com/dfornika/sequencing-runs-db.git
+    - name: Create Database
+      run: >-
+        ./sequencing-runs-db/.github/scripts/create_database.sh
+    - name: Setup Flyway
+      run: >-
+        ./sequencing-runs-db/.github/scripts/install_flyway.sh
+    - name: Flyway Migrate
+      run: >-
+        ./sequencing-runs-db/.github/scripts/apply_migrations.sh
+    - name: Build uberjar
+      run: >-
+        ./scripts/build.sh
+
