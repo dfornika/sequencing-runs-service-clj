@@ -31,6 +31,7 @@
          (crud/create! db :sequencing_instrument_illumina :instrument_id)
          (response))))
 
+
 (defn get-instruments-nanopore
   ""
   [db request]
@@ -50,6 +51,11 @@
          (crud/create! db :sequencing_instrument_nanopore :instrument_id)
          (response))))
 
+
+(defn create-sequencing-run-illumina
+  ""
+  [db request]
+  )
 
 
 (defn root-handler
