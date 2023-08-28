@@ -39,6 +39,9 @@ jobs:
     - name: Build uberjar
       run: |
         ./scripts/build.sh
+    - name: Start Server
+      run: |
+        ./scripts/start.sh &
     - name: Download OpenAPI schema
       run: |
         wget https://raw.githubusercontent.com/dfornika/genomics-services-api-schemas/main/schemas/sequencing-runs-service.yaml
@@ -46,9 +49,13 @@ jobs:
       uses: schemathesis/action@v1
       with:
         schema: ./sequencing-runs-service.yaml
+	base-url: http://localhost:8080
+	api-name: 'sequencing-runs-api'
+	report: 'schemathesis_report.tar.gz'
     - name: Collect Artifacts
       run: |
         mkdir artifacts
+	cp schemathesis_report.tar.gz artifacts/
         cp report.html artifacts/migration-report.html
         cp report.json artifacts/migration-report.json
     - uses: actions/upload-artifact@v1
