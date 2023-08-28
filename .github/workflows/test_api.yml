@@ -49,13 +49,13 @@ jobs:
       uses: schemathesis/action@v1
       with:
         schema: ./sequencing-runs-service.yaml
-	base-url: http://localhost:8080
-	api-name: 'sequencing-runs-api'
-	report: 'schemathesis_report.tar.gz'
+        base-url: http://localhost:8080
+        api-name: 'sequencing-runs-api'
+        report: 'schemathesis_report.tar.gz'
     - name: Collect Artifacts
       run: |
         mkdir artifacts
-	cp schemathesis_report.tar.gz artifacts/
+        cp schemathesis_report.tar.gz artifacts/
         cp report.html artifacts/migration-report.html
         cp report.json artifacts/migration-report.json
     - uses: actions/upload-artifact@v1
