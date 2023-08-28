@@ -53,12 +53,14 @@ jobs:
         api-name: 'sequencing-runs-api'
         report: 'schemathesis_report.tar.gz'
     - name: Collect Artifacts
+      if: always()
       run: |
         mkdir artifacts
         cp schemathesis_report.tar.gz artifacts/
         cp report.html artifacts/migration-report.html
         cp report.json artifacts/migration-report.json
     - uses: actions/upload-artifact@v1
+      if: always()
       with:
         name: artifacts
         path: artifacts
