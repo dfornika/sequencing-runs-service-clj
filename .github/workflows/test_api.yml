@@ -25,8 +25,9 @@ jobs:
     - uses: actions/checkout@v3
     - name: Copy Keycloak Realm
       run: |
-        mkdir -p ${HOME}/data/keycloak/realms
-        cp .github/data/keycloak/realms/* ${HOME}/data/keycloak/realms/
+        echo ${GITHUB_WORKSPACE}
+        mkdir -p ${GITHUB_WORKSPACE}/data/keycloak/realms
+        cp .github/data/keycloak/realms/* ${GITHUB_WORKSPACE}/data/keycloak/realms/
     - name: Setup Keycloak
       run: |
         docker exec \
