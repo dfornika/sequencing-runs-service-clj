@@ -18,7 +18,7 @@
   (let [instruments (crud/read db :sequencing_instrument_illumina)]
     (->> instruments
          (map #(update-keys % (comp keyword name)))
-         (map #(dissoc % :id))
+         (map #(dissoc % :pk))
          (response))))
 
 
@@ -38,7 +38,7 @@
   (let [instruments (crud/read db :sequencing_instrument_nanopore)]
     (->> instruments
          (map #(update-keys % (comp keyword name)))
-         (map #(dissoc % :id))
+         (map #(dissoc % :pk))
          (response))))
 
 
@@ -64,14 +64,14 @@
   (wrap-json-response
    (reitit.ring/ring-handler
     (reitit.ring/router
-     [["/instruments/illumina" {:get {:handler (fn [request] (get-instruments-illumina db request))}
-                                :post {:handler (fn [request] (create-instrument-illumina db request))}}]
-      ["/instruments/nanopore" {:get {:handler (fn [request] (get-instruments-nanopore db request))}
-                                :post {:handler (fn [request] (create-instrument-nanopore db request))}}]]
+     [["/sequencing-instruments/illumina" {:get {:handler (fn [request] (get-instruments-illumina db request))}
+                                           :post {:handler (fn [request] (create-instrument-illumina db request))}}]
+      ["/sequencing-instruments/nanopore" {:get {:handler (fn [request] (get-instruments-nanopore db request))}
+                                           :post {:handler (fn [request] (create-instrument-nanopore db request))}}]]
      {:data {:coercion   reitit.coercion.spec/coercion
              :muuntaja   muuntaja/instance
              :middleware [reitit.ring.middleware.parameters/parameters-middleware
                           reitit.ring.coercion/coerce-request-middleware
                           reitit.ring.coercion/coerce-response-middleware
-                          reitit.ring.middleware.muuntaja/format-response-middleware]}}
-     ))))
+                          reitit.ring.middleware.muuntaja/format-response-middleware]}})
+    (reitit.ring/redirect-trailing-slash-handler))))
