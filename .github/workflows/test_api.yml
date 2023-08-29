@@ -30,10 +30,10 @@ jobs:
           python3-requests
     - name: Check Keycloak
       run: |
-        ./.github/scripts/get_openid_configuration.py --base-url http://localhost:8080/
+        ./.github/scripts/get_openid_configuration.py --base-url http://keycloak:8080/
     - name: Setup Keycloak
       run: |
-        ./.github/scripts/load_keycloak_realm.py --base-url http://localhost:8080/ --realm-json .github/data/keycloak/realms/keycloak-test-realm.json
+        ./.github/scripts/load_keycloak_realm.py --base-url http://keycloak:8080/ --realm-json .github/data/keycloak/realms/keycloak-test-realm.json
     - name: Prepare java
       uses: actions/setup-java@v3
       with:
