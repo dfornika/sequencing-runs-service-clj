@@ -16,12 +16,15 @@ jobs:
         image: quay.io/keycloak/keycloak:22.0
         ports:
           - 8180:8080
-        volumes: keycloak-data-import:/opt/keycloak/data/import
+        volumes:
+          - ./.github/data/keycloak/realms:/opt/keycloak/data/import
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
     steps:
     - uses: actions/checkout@v3
+      with:
+        clean: false
     - name: Setup Keycloak
       run: |
         docker exec \
