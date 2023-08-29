@@ -1,5 +1,5 @@
 name: "Test API"
-on: 
+on:
   push:
     branches:
       - main
