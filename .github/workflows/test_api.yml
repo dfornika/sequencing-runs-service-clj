@@ -15,21 +15,18 @@ jobs:
       keycloak:
         image: quay.io/keycloak/keycloak:22.0
         ports:
-          - 8080:8080
+          - 8080/tcp
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
     steps:
     - uses: actions/checkout@v3
-    - name: Set Environment Variables
-      run: |
-        echo "{BRIDGE_IP}={$(docker network inspect bridge --format='{{( index .IPAM.Config 0).Gateway}}')}" >> $GITHUB_ENV
     - name: Check Keycloak
       run: |
-        ./.github/scripts/get_openid_configuration.py --base-url http://${BRIDGE_IP}:8080/
+        ./.github/scripts/get_openid_configuration.py --base-url http://localhost:${{ job.services.keycloak.ports[8080] }}/
     - name: Setup Keycloak
       run: |
-        ./.github/scripts/load_keycloak_realm.py --base-url http://${BRIDGE_IP}:8080/ --realm-json .github/data/keycloak/realms/keycloak-test-realm.json
+        ./.github/scripts/load_keycloak_realm.py --base-url http://localhost:${{ job.services.keycloak.ports[8080] }}/ --realm-json .github/data/keycloak/realms/keycloak-test-realm.json
     - name: Prepare java
       uses: actions/setup-java@v3
       with:
