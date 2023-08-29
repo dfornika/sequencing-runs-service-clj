@@ -17,7 +17,7 @@ jobs:
         ports:
           - 8180:8080
         volumes:
-          - ${HOME}/data/keycloak/realms:/opt/keycloak/data/import
+          - /home/runner/data/keycloak/realms:/opt/keycloak/data/import
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
