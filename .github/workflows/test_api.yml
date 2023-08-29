@@ -55,7 +55,7 @@ jobs:
     - name: Collect Artifacts
       if: always()
       run: |
-        mkdir `date +'%Y%m%d%H%M%S'`_sequencing-runs-service_test_api_artifacts/{schemathesis_report,migration_report}
+        mkdir -p `date +'%Y%m%d%H%M%S'`_sequencing-runs-service_test_api_artifacts/{schemathesis_report,migration_report}
         tar -xzf schemathesis_report.tar.gz -C *_sequencing-runs-service_test_api_artifacts/schemathesis_report
         cp report.html *_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.html
         cp report.json *_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.json
