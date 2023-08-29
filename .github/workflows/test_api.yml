@@ -63,4 +63,4 @@ jobs:
       if: always()
       with:
         name: artifacts
-        path: *_sequencing-runs-service_test_api_artifacts
+        path: '*_sequencing-runs-service_test_api_artifacts'
