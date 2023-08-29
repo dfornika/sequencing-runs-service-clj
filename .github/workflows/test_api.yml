@@ -77,7 +77,7 @@ jobs:
         tar -xzf schemathesis_report.tar.gz -C ${datetime}_sequencing-runs-service_test_api_artifacts/schemathesis_report
         cp report.html ${datetime}_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.html
         cp report.json ${datetime}_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.json
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       if: always()
       with:
         name: artifacts
