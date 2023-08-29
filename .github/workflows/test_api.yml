@@ -14,20 +14,24 @@ jobs:
     services:
       keycloak:
         image: quay.io/keycloak/keycloak:22.0
+        name: keycloak
         ports:
           - 8180:8080
+        volumes:
+          - .github/data/keycloak/realms:/opt/keycloak/data/import
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
     steps:
     - uses: actions/checkout@v3
     - name: Setup Keycloak
-      uses: carlosthe19916/keycloak-action@0.4
-      with:
-        server: http://keycloak:8080/auth
-        username: admin
-        password: admin
-        kcadm: create realms -f .github/keycloak-test-realm.json
+      run: |
+        docker exec \
+          -e KEYCLOAK_ADMIN=admin \
+          -e KEYCLOAK_ADMIN_PASSWORD=admin \
+          keycloak \
+          /opt/keycloak/bin/kc.sh import \
+            --file /opt/keycloak/data/import/keycloak-test-realm.json
     - name: Prepare java
       uses: actions/setup-java@v3
       with:
