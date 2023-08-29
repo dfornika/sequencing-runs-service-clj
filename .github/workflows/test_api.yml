@@ -11,6 +11,14 @@ on:
 jobs:
   test_api:
     runs-on: ubuntu-latest
+    services:
+      keycloak:
+        image: quay.io/keycloak/keycloak:22.0
+        ports:
+          - 8180:8080
+        env:
+          KEYCLOAK_USER: admin
+          KEYCLOAK_PASSWORD: admin
     steps:
     - uses: actions/checkout@v3
     - name: Prepare java
@@ -55,10 +63,13 @@ jobs:
     - name: Collect Artifacts
       if: always()
       run: |
-        mkdir -p `date +'%Y%m%d%H%M%S'`_sequencing-runs-service_test_api_artifacts/{schemathesis_report,migration_report}
-        tar -xzf schemathesis_report.tar.gz -C *_sequencing-runs-service_test_api_artifacts/schemathesis_report
-        cp report.html *_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.html
-        cp report.json *_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.json
+        datetime=`date +'%Y%m%d%H%M%S'`
+        mkdir ${datetime}_sequencing-runs-service_test_api_artifacts
+        mkdir ${datetime}_sequencing-runs-service_test_api_artifacts/schemathesis_report
+        mkdir ${datetime}_sequencing-runs-service_test_api_artifacts/migration_report
+        tar -xzf schemathesis_report.tar.gz -C ${datetime}_sequencing-runs-service_test_api_artifacts/schemathesis_report
+        cp report.html ${datetime}_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.html
+        cp report.json ${datetime}_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.json
     - uses: actions/upload-artifact@v1
       if: always()
       with:
