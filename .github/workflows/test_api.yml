@@ -16,8 +16,7 @@ jobs:
         image: quay.io/keycloak/keycloak:22.0
         ports:
           - 8180:8080
-        volumes:
-          - ./.github/data/keycloak/realms:/opt/keycloak/data/import
+        volumes: keycloak-data-import:/opt/keycloak/data/import
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
