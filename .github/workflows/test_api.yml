@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Set Environment Variables
       run: |
-        echo "::set-env name=BRIDGE_IP::$(docker network inspect bridge --format='{{( index .IPAM.Config 0).Gateway}}')"
+        echo "{BRIDGE_IP}={$(docker network inspect bridge --format='{{( index .IPAM.Config 0).Gateway}}')}" >> $GITHUB_ENV
     - name: Check Keycloak
       run: |
         ./.github/scripts/get_openid_configuration.py --base-url http://${BRIDGE_IP}:8080/
