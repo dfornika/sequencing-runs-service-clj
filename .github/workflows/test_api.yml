@@ -17,14 +17,16 @@ jobs:
         ports:
           - 8180:8080
         volumes:
-          - ./.github/data/keycloak/realms:/opt/keycloak/data/import
+          - /tmp/data/keycloak/realms:/opt/keycloak/data/import
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
     steps:
     - uses: actions/checkout@v3
-      with:
-        clean: false
+    - name: Copy Keycloak Realm
+      run: |
+        mkdir -p /tmp/data/keycloak/realms
+        cp .github/data/keycloak/realms/* /tmp/data/keycloak/realms/
     - name: Setup Keycloak
       run: |
         docker exec \
