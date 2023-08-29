@@ -55,12 +55,12 @@ jobs:
     - name: Collect Artifacts
       if: always()
       run: |
-        mkdir artifacts
-        cp schemathesis_report.tar.gz artifacts/
-        cp report.html artifacts/migration-report.html
-        cp report.json artifacts/migration-report.json
+        mkdir `date +'%Y%m%d%H%M%S'`_sequencing-runs-service_test_api_artifacts/{schemathesis_report,migration_report}
+        tar -xzf schemathesis_report.tar.gz -C *_sequencing-runs-service_test_api_artifacts/schemathesis_report
+        cp report.html *_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.html
+        cp report.json *_sequencing-runs-service_test_api_artifacts/migration_report/migration-report.json
     - uses: actions/upload-artifact@v1
       if: always()
       with:
         name: artifacts
-        path: artifacts
+        path: *_sequencing-runs-service_test_api_artifacts
