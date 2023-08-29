@@ -11,6 +11,7 @@ on:
 jobs:
   test_api:
     runs-on: ubuntu-latest
+    container: ubuntu
     services:
       keycloak:
         image: quay.io/keycloak/keycloak:22.0
