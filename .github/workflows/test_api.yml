@@ -14,7 +14,6 @@ jobs:
     services:
       keycloak:
         image: quay.io/keycloak/keycloak:22.0
-        name: keycloak
         ports:
           - 8180:8080
         volumes:
