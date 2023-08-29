@@ -17,7 +17,7 @@ jobs:
         ports:
           - 8180:8080
         volumes:
-          - /home/runner/data/keycloak/realms:/opt/keycloak/data/import
+          - /home/runner/work/sequencing-runs-service-clj/sequencing-runs-service-clj/data/keycloak/realms:/opt/keycloak/data/import
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
@@ -30,6 +30,7 @@ jobs:
         cp .github/data/keycloak/realms/* ${GITHUB_WORKSPACE}/data/keycloak/realms/
     - name: Setup Keycloak
       run: |
+        docker ps -a
         docker exec \
           -e KEYCLOAK_ADMIN=admin \
           -e KEYCLOAK_ADMIN_PASSWORD=admin \
