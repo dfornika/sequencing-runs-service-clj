@@ -21,6 +21,13 @@ jobs:
           KEYCLOAK_PASSWORD: admin
     steps:
     - uses: actions/checkout@v3
+    - name: Setup Keycloak
+      uses: carlosthe19916/keycloak-action@0.4
+      with:
+        server: http://keycloak:8080/auth
+        username: admin
+        password: admin
+        kcadm: create realms -f .github/keycloak-test-realm.json
     - name: Prepare java
       uses: actions/setup-java@v3
       with:
