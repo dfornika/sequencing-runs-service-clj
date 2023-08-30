@@ -20,6 +20,11 @@ jobs:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
           KC_HEALTH_ENABLED: true
+        options: >-
+          --health-cmd curl http://localhost:8080/health
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v3
     - name: Check Docker Network
