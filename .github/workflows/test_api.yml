@@ -21,6 +21,7 @@ jobs:
           KEYCLOAK_PASSWORD: admin
           KC_HEALTH_ENABLED: true
         options: >-
+          --entrypoint "/opt/keycloak/bin/kc.sh start-dev"
           --health-cmd "curl http://localhost:8080/health"
           --health-interval 10s
           --health-timeout 5s
