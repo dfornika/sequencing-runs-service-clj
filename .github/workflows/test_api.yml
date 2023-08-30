@@ -11,29 +11,20 @@ on:
 jobs:
   test_api:
     runs-on: ubuntu-latest
-    services:
-      keycloak:
-        image: quay.io/keycloak/keycloak:22.0
-        ports:
-          - 8080:8080
-        env:
-          KEYCLOAK_USER: admin
-          KEYCLOAK_PASSWORD: admin
-          KC_HEALTH_ENABLED: true
-        options: >-
-          --entrypoint "[\"/opt/keycloak/bin/kc.sh\", \"start-dev\"]"
-          --health-cmd "curl http://localhost:8080/health"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
     - uses: actions/checkout@v3
-    - name: Check Docker Network
+    - name: Start Keycloak Service
       run: |
-        docker ps -a
-        docker network ls
+        docker run -d \
+          -p 8080:8080 \
+          --name keycloak \
+          -e KEYCLOAK_ADMIN=admin \
+          -e KEYCLOAK_ADMIN_PASSWORD=admin \
+          -e KC_HEALTH_ENABLED=true \
+          quay.io/keycloak/keycloak:22.0 start-dev
     - name: Check Keycloak
       run: |
+        sleep 10
         curl http://localhost:8080/health
         ./.github/scripts/get_openid_configuration.py --base-url http://localhost:8080/
     - name: Setup Keycloak
