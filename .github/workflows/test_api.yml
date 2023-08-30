@@ -19,6 +19,7 @@ jobs:
         env:
           KEYCLOAK_USER: admin
           KEYCLOAK_PASSWORD: admin
+          KC_HEALTH_ENABLED: true
     steps:
     - uses: actions/checkout@v3
     - name: Check Docker Network
@@ -27,6 +28,7 @@ jobs:
         docker network ls
     - name: Check Keycloak
       run: |
+        curl http://localhost:8080/health
         ./.github/scripts/get_openid_configuration.py --base-url http://localhost:8080/
     - name: Setup Keycloak
       run: |
