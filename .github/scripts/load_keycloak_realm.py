@@ -39,7 +39,7 @@ def main(args):
         }
         realms_response = requests.post(args.base_url + 'admin/realms', headers=headers, data=json.dumps(realm))
         if realms_response.status_code == 201:
-            print("Realm '" + realm['realm'] + " created with id '" + realm['id'] + "'")
+            print("Realm '" + realm['realm'] + "' created with id '" + realm['id'] + "'")
             exit(0)
         else:
             print("Failed to create realm '" + realm['realm'] + "'")
