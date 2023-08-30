@@ -38,7 +38,7 @@ def main(args):
             'Content-Type': 'application/json',
         }
         realms_response = requests.post(args.base_url + 'admin/realms', headers=headers, data=json.dumps(realm))
-        if realms_response.status_code == '201':
+        if realms_response.status_code == 201:
             print("Realm '" + realm['realm'] + " created with id '" + realm['id'] + "'")
 
 if __name__ == '__main__':
