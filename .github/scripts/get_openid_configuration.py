@@ -3,9 +3,10 @@
 import argparse
 import json
 import requests
+import time
 
 
-def get_access_token(url, client_id='admin-cli', username='admin', password='admin'):
+def get_access_token(url, client_id='admin-cli', username='admin', password='admin', max_retries=5, retry_interval_seconds=5):
     access_token = None
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -16,7 +17,15 @@ def get_access_token(url, client_id='admin-cli', username='admin', password='adm
         'username': username,
         'password': password,
     }
-    token_response = requests.post(args.base_url + 'realms/master/protocol/openid-connect/token', headers=headers, data=payload)
+    for retry_num in range(max_retries):
+        try:
+            token_response = requests.post(args.base_url + 'realms/master/protocol/openid-connect/token', headers=headers, data=payload)
+            break
+        except requests.exceptions.ConnectionError as e:
+            retry_interval_seconds += 2
+            time.sleep(retry_interval_seconds)
+            print('retrying...')
+        
     if token_response.status_code == requests.codes.ok:
         access_token = token_response.json()['access_token']
 
