@@ -47,7 +47,9 @@ jobs:
         .github/scripts/create_database.sh
     - name: Setup Flyway
       run: |
-        ./sequencing-runs-db/.github/scripts/install_flyway.sh
+        pushd sequencing-runs-db
+        .github/scripts/install_flyway.sh
+        popd
     - name: Flyway Migrate
       run: |
         pushd sequencing-runs-db
