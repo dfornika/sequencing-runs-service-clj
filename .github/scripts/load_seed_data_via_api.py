@@ -20,7 +20,7 @@ def main(args):
                     print(json.dumps(post_instrument_response.status_code, indent=2))
                     print(json.dumps(dict(post_instrument_response.headers), indent=2))
                     print(json.dumps(post_instrument_response.json(), indent=2))
-                except requests.exceptions.JSONDecodeError as e:
+                except Exception as e:
                     print(post_instrument_response.text)
             except requests.exceptions.ConnectionError as e:
                 print('connection failed')
