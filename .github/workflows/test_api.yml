@@ -50,7 +50,9 @@ jobs:
         ./sequencing-runs-db/.github/scripts/install_flyway.sh
     - name: Flyway Migrate
       run: |
+        pushd sequencing-runs-db
         .github/scripts/apply_migrations.sh
+        popd
     - name: Build uberjar
       run: |
         ./scripts/build.sh
