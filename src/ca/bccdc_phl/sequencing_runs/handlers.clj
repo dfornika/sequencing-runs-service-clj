@@ -39,17 +39,25 @@
 (defn create-instrument-illumina
   ""
   [db request]
-  (let [request-body (json/parse-string (slurp (:body request)) true)
-        response-body (->> request-body
-                           (crud/create! db :sequencing_instrument_illumina :instrument_id))]
+  (let [request-body (json/parse-string (slurp (:body request)) true)]
     (cond
-      (nil? response-body) {:status 409 :body nil}
-      :else (let [inserted-instrument (first (crud/read db :sequencing_instrument_illumina :instrument_id (:instrument_id request-body)))]
-              {:status 201
-               :headers {"Location" (str "/sequencing-instruments/illumina/" (:sequencing_instrument_illumina/instrument_id inserted-instrument))}
-               :body (-> inserted-instrument
-                         (update-keys (comp keyword name))
-                         (dissoc :pk))}))))
+      (nil? (:instrument_id request-body))
+      {:status 400 :body nil}
+      :else
+      (do
+        (->> request-body
+             (crud/create! db :sequencing_instrument_illumina :instrument_id))
+        (let [inserted-instrument (first (crud/read db :sequencing_instrument_illumina :instrument_id (:instrument_id request-body)))]
+          (cond
+            (nil? inserted-instrument)
+            {:status 500 :body nil}
+            :else
+            {:status 201
+             :headers {"Location" (str "/sequencing-instruments/illumina/" (:sequencing_instrument_illumina/instrument_id inserted-instrument))}
+             :body (-> inserted-instrument
+                       (update-keys (comp keyword name))
+                       (dissoc :pk))}))))))
+
 
 (defn delete-instrument-illumina
   ""
@@ -107,7 +115,7 @@
                                            :post {:handler (fn [request] (create-instrument-nanopore db request))}}]]
      {:data {:coercion   reitit.coercion.spec/coercion
              :muuntaja   muuntaja/instance
-             :middleware [reitit.ring.middleware.exception/exception-middleware
+             :middleware [#_reitit.ring.middleware.exception/exception-middleware
                           reitit.ring.middleware.parameters/parameters-middleware
                           reitit.ring.coercion/coerce-request-middleware
                           reitit.ring.coercion/coerce-response-middleware

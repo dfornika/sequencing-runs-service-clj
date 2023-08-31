@@ -25,11 +25,13 @@
         columns (keys entity)
         values [(vals entity)]]
     (when (empty? existing-entity)
-      (->> {:insert-into [table]
-            :columns columns
-            :values values}
-           (sql/format)
-           (jdbc/execute! datasource)))))
+      (let [sql-statement (->> {:insert-into [table]
+                                :columns columns
+                                :values values}
+                               (sql/format))]
+            (try
+              (jdbc/execute! datasource sql-statement)
+              (catch java.sql.SQLException e (error e)))))))
 
 
 (defn update!
