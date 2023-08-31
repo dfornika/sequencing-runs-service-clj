@@ -89,4 +89,4 @@
                           reitit.ring.coercion/coerce-request-middleware
                           reitit.ring.coercion/coerce-response-middleware
                           reitit.ring.middleware.muuntaja/format-response-middleware]}})
-    (reitit.ring/redirect-trailing-slash-handler))))
+    (reitit.ring/redirect-trailing-slash-handler {:method :strip}))))
