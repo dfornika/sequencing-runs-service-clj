@@ -10,7 +10,7 @@
             [ring.util.response :refer [response not-found]]
             [ring.middleware.json :refer [wrap-json-response]]
             [cheshire.core :as json]
-            [taoensso.timbre :as timbre :refer [log  trace  debug  info  warn  error  fatal  report spy]]
+            [com.brunobonacci.mulog :as u]
             [ca.bccdc-phl.sequencing-runs.crud :as crud]))
 
 
@@ -81,7 +81,6 @@
 (defn create-instrument-nanopore
   ""
   [db request]
-  (info request)
   (let [request-body (json/parse-string (slurp (:body request)) true)] ;; TODO: Automatically convert request body to map using muuntaja?
     (->> request-body
          (crud/create! db :sequencing_instrument_nanopore :instrument_id)

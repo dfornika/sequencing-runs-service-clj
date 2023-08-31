@@ -1,7 +1,7 @@
 (ns ca.bccdc-phl.sequencing-runs.crud
   (:require [next.jdbc :as jdbc]
             [honey.sql :as sql]
-            [taoensso.timbre :as timbre :refer [log  trace  debug  info  warn  error  fatal  report spy]])
+            [com.brunobonacci.mulog :as u])
   (:refer-clojure :exclude [read update]))
 
 
@@ -31,7 +31,7 @@
                                (sql/format))]
             (try
               (jdbc/execute! datasource sql-statement)
-              (catch java.sql.SQLException e (error e)))))))
+              (catch java.sql.SQLException e (u/log ::create! :exception e :status :failed)))))))
 
 
 (defn update!
