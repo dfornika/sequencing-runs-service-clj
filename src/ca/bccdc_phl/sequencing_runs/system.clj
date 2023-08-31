@@ -20,15 +20,9 @@
     (config/load-config path)))
 
 (defmethod ig/init-key ::db [_ opts]
-  (let [db-uri (get-in opts [::config :db :connection-uri])
-        dbname (last (str/split db-uri #"/"))
-        username (get-in opts [:db :user])
-        password (get-in opts [:db :password])]
+  (let [db-uri (get-in opts [::config :db :connection-uri])]
     (jdbc.connection/->pool com.zaxxer.hikari.HikariDataSource
-                            {:dbtype "postgres"
-                             :dbname dbname
-                             :username username
-                             :password password})))
+                            {:jdbcUrl db-uri})))
 
 (defmethod ig/init-key ::server [_ opts]
   (let [port (get-in opts [::config :server :port])

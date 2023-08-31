@@ -88,13 +88,13 @@
           (crud/create! ds :sequencing_run_illumina_demultiplexing :demultiplexing_id demux)
         ))))))
 
-
+(def system integrant.repl.state/system)
 
 
 (comment
   (ragtime.repl/migrate ragtime-config)
   (ragtime.repl/rollback ragtime-config)
-  integrant.repl.state/system
+  
   (go)
   (halt)
   (reset)

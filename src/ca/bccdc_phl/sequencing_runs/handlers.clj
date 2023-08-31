@@ -25,11 +25,12 @@
 (defn create-instrument-illumina
   ""
   [db request]
-  (info request)
-  (let [request-body (json/parse-string (slurp (:body request)) true)] ;; TODO: Automatically convert request body to map using muuntaja?
-    (->> request-body
-         (crud/create! db :sequencing_instrument_illumina :instrument_id)
-         (response))))
+  (let [request-body (json/parse-string (slurp (:body request)) true)
+        response-body (->> request-body
+                           (crud/create! db :sequencing_instrument_illumina :instrument_id))]
+    (cond
+      (nil? response-body) {:status 409 :body nil}
+      :else (response {:status 201 :body response-body}))))
 
 
 (defn get-instruments-nanopore
