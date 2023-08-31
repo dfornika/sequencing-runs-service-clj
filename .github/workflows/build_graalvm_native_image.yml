@@ -1,0 +1,50 @@
+name: "Build GraalVM Native Image"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_graalvm_native_image:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: graalvm/setup-graalvm@v1
+      with:
+        java-version: '17.0.7'
+        distribution: 'graalvm'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        set-java-home: 'true'
+        native-image-musl: 'true'
+        native-image-job-reports: 'true'
+    - name: Install clojure tools
+      uses: DeLaGuardo/setup-clojure@11.0
+      with:
+        cli: 1.11.1.1413
+    - name: Build uberjar
+      run: |
+        ./scripts/build.sh
+    - name: Build Native Image
+      run: |
+        native-image --report-unsupported-elements-at-runtime \
+             --initialize-at-build-time \
+             --no-server \
+             -jar ./target/sequencing-runs-service-0.1.0-standalone.jar \
+             -H:Name=./target/sequencing-runs-service
+    - name: Collect Artifacts
+      if: always()
+      run: |
+        datetime=`date +'%Y%m%d%H%M%S'`
+        artifacts_dir=${datetime}_sequencing-runs-service_build_graalvm_native_image_artifacts
+        mkdir --p ${artifacts_dir}
+        cp ./target/sequencing-runs-service-0.1.0-standalone.jar ${artifacts_dir}
+        cp ./target/sequencing-runs-service ${artifacts_dir}
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: artifacts
+        path: '*_sequencing-runs-service_build_graalvm_native_image_artifacts'

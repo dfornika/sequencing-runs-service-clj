@@ -7,7 +7,7 @@
             [reitit.ring.middleware.parameters]
             [reitit.ring.middleware.exception]
             [reitit.swagger]
-            [ring.util.response :refer [response]]
+            [ring.util.response :refer [response not-found]]
             [ring.middleware.json :refer [wrap-json-response]]
             [cheshire.core :as json]
             [taoensso.timbre :as timbre :refer [log  trace  debug  info  warn  error  fatal  report spy]]
@@ -27,7 +27,9 @@
     :else
     (let [instrument (first (crud/read db :sequencing_instrument_illumina :instrument_id (:instrument-id (:path-params request))))]
       (cond
-        (nil? instrument) {:status 404 :body nil}
+        (nil? instrument)
+        (-> (not-found "")
+            (assoc-in [:headers "Content-Type"] "application/json;charset=utf-8"))
         :else (-> instrument
                   (update-keys (comp keyword name))
                   (dissoc :pk)
