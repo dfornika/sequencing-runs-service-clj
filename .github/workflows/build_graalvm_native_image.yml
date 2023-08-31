@@ -13,7 +13,6 @@ jobs:
         distribution: 'graalvm'
         github-token: ${{ secrets.GITHUB_TOKEN }}
         set-java-home: 'true'
-        native-image-musl: 'true'
         native-image-job-reports: 'true'
     - name: Install clojure tools
       uses: DeLaGuardo/setup-clojure@11.0
@@ -26,7 +25,6 @@ jobs:
       run: |
         native-image --report-unsupported-elements-at-runtime \
              --initialize-at-build-time \
-             --no-server \
              -jar ./target/sequencing-runs-service-0.1.0-standalone.jar \
              -H:Name=./target/sequencing-runs-service
     - name: Collect Artifacts
@@ -35,6 +33,7 @@ jobs:
         datetime=`date +'%Y%m%d%H%M%S'`
         artifacts_dir=${datetime}_sequencing-runs-service_build_graalvm_native_image_artifacts
         mkdir --p ${artifacts_dir}
+        cp /tmp/native-image-build-output.json ${artifacts_dir}
         cp ./target/sequencing-runs-service-0.1.0-standalone.jar ${artifacts_dir}
         cp ./target/sequencing-runs-service ${artifacts_dir}
     - uses: actions/upload-artifact@v3
