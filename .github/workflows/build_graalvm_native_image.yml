@@ -24,7 +24,7 @@ jobs:
         ./scripts/build.sh
     - name: Build Native Image
       run: |
-        native-image
+        native-image \
           --static \
           --libc=musl \
           --report-unsupported-elements-at-runtime \
