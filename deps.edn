@@ -18,8 +18,7 @@
         ring/ring-defaults {:mvn/version "0.3.4"}
         ring/ring-jetty-adapter {:mvn/version "1.10.0"}
         ring/ring-json {:mvn/version "0.5.1"}
-        metosin/reitit {:mvn/version "0.5.18"}
-        metosin/reitit-ring {:mvn/version "0.7.0-alpha3"}
+        metosin/reitit {:mvn/version "0.7.0-alpha5"}
         cheshire/cheshire {:mvn/version "5.11.0"}}
  :aliases
  {:dev {:extra-paths ["env/dev/src" "env/dev/resources"]

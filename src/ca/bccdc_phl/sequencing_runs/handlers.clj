@@ -5,6 +5,8 @@
             [reitit.ring.coercion]
             [reitit.ring.middleware.muuntaja]
             [reitit.ring.middleware.parameters]
+            [reitit.ring.middleware.exception]
+            [reitit.swagger]
             [ring.util.response :refer [response]]
             [ring.middleware.json :refer [wrap-json-response]]
             [cheshire.core :as json]
@@ -15,11 +17,21 @@
 (defn get-instruments-illumina
   ""
   [db request]
-  (let [instruments (crud/read db :sequencing_instrument_illumina)]
-    (->> instruments
-         (map #(update-keys % (comp keyword name)))
-         (map #(dissoc % :pk))
-         (response))))
+  (cond
+    (nil? (:instrument-id (:path-params request)))
+    (let [instruments (crud/read db :sequencing_instrument_illumina)]
+      (->> instruments
+           (map #(update-keys % (comp keyword name)))
+           (map #(dissoc % :pk))
+           (response)))
+    :else
+    (let [instrument (first (crud/read db :sequencing_instrument_illumina :instrument_id (:instrument-id (:path-params request))))]
+      (cond
+        (nil? instrument) {:status 404 :body nil}
+        :else (-> instrument
+                  (update-keys (comp keyword name))
+                  (dissoc :pk)
+                  (response))))))
 
 
 (defn create-instrument-illumina
@@ -78,14 +90,23 @@
   (wrap-json-response
    (reitit.ring/ring-handler
     (reitit.ring/router
-     [["/sequencing-instruments/illumina" {:get {:handler (fn [request] (get-instruments-illumina db request))}
+     [["/openapi.json"
+       {:get {:no-doc true
+              :swagger {:info {:title "Sequencing Runs API"
+                               :description "Information about sequencing runs."
+                               :version "0.1.0-alpha"}
+                        :basePath "/"}
+              :handler (reitit.swagger/create-swagger-handler)}}]
+      ["/sequencing-instruments/illumina" {:get {:handler (fn [request] (get-instruments-illumina db request))}
                                            :post {:handler (fn [request] (create-instrument-illumina db request))}}]
-       ["/sequencing-instruments/illumina/:instrument-id" {:delete {:handler (fn [request] (delete-instrument-illumina db request))}}]
+      ["/sequencing-instruments/illumina/:instrument-id" {:get {:handler (fn [request] (get-instruments-illumina db request))}
+                                                          :delete {:handler (fn [request] (delete-instrument-illumina db request))}}]
       ["/sequencing-instruments/nanopore" {:get {:handler (fn [request] (get-instruments-nanopore db request))}
                                            :post {:handler (fn [request] (create-instrument-nanopore db request))}}]]
      {:data {:coercion   reitit.coercion.spec/coercion
              :muuntaja   muuntaja/instance
-             :middleware [reitit.ring.middleware.parameters/parameters-middleware
+             :middleware [reitit.ring.middleware.exception/exception-middleware
+                          reitit.ring.middleware.parameters/parameters-middleware
                           reitit.ring.coercion/coerce-request-middleware
                           reitit.ring.coercion/coerce-response-middleware
                           reitit.ring.middleware.muuntaja/format-response-middleware]}})
