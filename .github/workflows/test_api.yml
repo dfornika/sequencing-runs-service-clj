@@ -58,7 +58,7 @@ jobs:
       run: |
         ./scripts/start.sh &
         sleep 10
-    - name Load Seed Data
+    - name: Load Seed Data
       run : |
         .github/scripts/load_seed_data_via_api.py --seed-data .github/data/seed_data
     - name: Download OpenAPI schema
