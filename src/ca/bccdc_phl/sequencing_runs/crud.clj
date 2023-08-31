@@ -43,5 +43,5 @@
   [datasource table id-key id]
   (->> {:delete-from [table]
         :where [:= id-key id]}
-       (sql/format)
+       (#(sql/format % {:inline true}))
        (jdbc/execute! datasource)))

@@ -18,6 +18,7 @@ def main(args):
                 post_instrument_response = requests.post(args.base_url + 'sequencing-instruments/illumina', json=illumina_instrument)
                 try:
                     print(json.dumps(post_instrument_response.status_code, indent=2))
+                    print(json.dumps(dict(post_instrument_response.headers), indent=2))
                     print(json.dumps(post_instrument_response.json(), indent=2))
                 except requests.exceptions.JSONDecodeError as e:
                     print(post_instrument_response.text)
