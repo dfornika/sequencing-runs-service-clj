@@ -29,7 +29,6 @@ jobs:
           --libc=musl \
           --initialize-at-build-time \
           --initialize-at-run-time=com.zaxxer.hikari.HikariDataSource \
-          --report-unsupported-elements-at-runtime \
           --trace-class-initialization=com.zaxxer.hikari.HikariDataSource \
           -H:ReflectionConfigurationFiles=./.github/config/graalvm-reflection.json \
           -jar ./target/sequencing-runs-service-0.1.0-standalone.jar \
