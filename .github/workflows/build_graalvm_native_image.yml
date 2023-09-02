@@ -30,6 +30,8 @@ jobs:
           --initialize-at-run-time=com.zaxxer.hikari.HikariDataSource \
           --report-unsupported-elements-at-runtime \
           --initialize-at-build-time \
+          -H:TraceClassInitialization \
+          -H:ReflectionConfigurationFiles=./.github/config/graalvm-reflection.json \
           -jar ./target/sequencing-runs-service-0.1.0-standalone.jar \
           -H:Name=./target/sequencing-runs-service
     - name: Collect Artifacts

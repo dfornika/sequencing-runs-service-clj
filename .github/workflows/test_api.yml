@@ -58,7 +58,7 @@ jobs:
         sleep 10
     - name: Load Seed Data
       run : |
-        .github/scripts/load_seed_data_via_api.py --seed-data .github/data/seed_data
+        .github/scripts/load_seed_data_via_api.py
     - name: Download OpenAPI schema
       run: |
         wget https://raw.githubusercontent.com/dfornika/genomics-services-api-schemas/main/schemas/sequencing-runs-service.yaml

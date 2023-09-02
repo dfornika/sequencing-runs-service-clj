@@ -1,5 +1,11 @@
 (ns build
-  (:require [clojure.tools.build.api :as b]))
+  (:require [clojure.tools.build.api :as b]
+            [com.brunobonacci.mulog :as u]
+            [com.brunobonacci.mulog.utils :as mu-utils]))
+
+(u/start-publisher! {:type :console-json
+                     :transform (fn [events] (map #(update % :mulog/timestamp mu-utils/iso-datetime-from-millis) events))})
+(u/log ::build-started :info "Build started")
 
 (def lib 'ca.bccdc-phl/sequencing-runs-service)
 (def main-ns 'ca.bccdc-phl.sequencing-runs.core)
@@ -18,7 +24,9 @@
   (b/compile-clj {:basis basis
                   :src-dirs ["src"]
                   :class-dir class-dir})
-  (b/uber {:class-dir class-dir
+  (do
+    (b/uber {:class-dir class-dir
            :main main-ns
            :uber-file uber-file
-           :basis basis}))
+           :basis basis})
+    (u/log ::build-complete :info "Build complete")))
