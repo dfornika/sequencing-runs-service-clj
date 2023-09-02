@@ -11,7 +11,8 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [cheshire.core :as json]
             [com.brunobonacci.mulog :as u]
-            [ca.bccdc-phl.sequencing-runs.crud :as crud]))
+            [ca.bccdc-phl.sequencing-runs.crud :as crud]
+            [ca.bccdc-phl.sequencing-runs.middleware :refer [wrap-logging]]))
 
 
 (defn get-instruments-illumina
@@ -93,30 +94,44 @@
   )
 
 
-(defn root-handler
+(defn make-routes
   ""
   [db]
-  (wrap-json-response
-   (reitit.ring/ring-handler
-    (reitit.ring/router
-     [["/openapi.json"
-       {:get {:no-doc true
-              :swagger {:info {:title "Sequencing Runs API"
-                               :description "Information about sequencing runs."
-                               :version "0.1.0-alpha"}
-                        :basePath "/"}
-              :handler (reitit.swagger/create-swagger-handler)}}]
-      ["/sequencing-instruments/illumina" {:get {:handler (fn [request] (get-instruments-illumina db request))}
-                                           :post {:handler (fn [request] (create-instrument-illumina db request))}}]
-      ["/sequencing-instruments/illumina/:instrument-id" {:get {:handler (fn [request] (get-instruments-illumina db request))}
-                                                          :delete {:handler (fn [request] (delete-instrument-illumina db request))}}]
-      ["/sequencing-instruments/nanopore" {:get {:handler (fn [request] (get-instruments-nanopore db request))}
-                                           :post {:handler (fn [request] (create-instrument-nanopore db request))}}]]
+  [["/openapi.json"
+    {:get {:no-doc true
+           :swagger {:info {:title "Sequencing Runs API"
+                            :description "Information about sequencing runs."
+                            :version "0.1.0-alpha"}
+                     :basePath "/"}
+           :handler (reitit.swagger/create-swagger-handler)}}]
+   ["/sequencing-instruments/illumina"
+    {:get {:handler (wrap-logging (fn [request] (get-instruments-illumina db request)))}
+     :post {:handler (fn [request] (create-instrument-illumina db request))}}]
+   ["/sequencing-instruments/illumina/:instrument-id"
+    {:get {:handler (fn [request] (get-instruments-illumina db request))}
+     :delete {:handler (fn [request] (delete-instrument-illumina db request))}}]
+   ["/sequencing-instruments/nanopore"
+    {:get {:handler (fn [request] (get-instruments-nanopore db request))}
+     :post {:handler (fn [request] (create-instrument-nanopore db request))}}]])
+
+
+(defn make-router
+  ""
+  [db]
+  (reitit.ring/router
+     (make-routes db)
      {:data {:coercion   reitit.coercion.spec/coercion
              :muuntaja   muuntaja/instance
              :middleware [#_reitit.ring.middleware.exception/exception-middleware
                           reitit.ring.middleware.parameters/parameters-middleware
                           reitit.ring.coercion/coerce-request-middleware
                           reitit.ring.coercion/coerce-response-middleware
-                          reitit.ring.middleware.muuntaja/format-response-middleware]}})
+                          reitit.ring.middleware.muuntaja/format-response-middleware]}}))
+
+(defn root-handler
+  ""
+  [db]
+  (wrap-json-response
+   (reitit.ring/ring-handler
+    (make-router db)
     (reitit.ring/redirect-trailing-slash-handler {:method :strip}))))

@@ -18,6 +18,8 @@
       (let [options-summary (:summary opts)]
         (cli/exit 0 (cli/usage options-summary))))
 
+    
+    
     (-> system/system-config
         (assoc-in [:ca.bccdc-phl.sequencing-runs.system/config :path] (get-in opts [:options :config]))
         ig/init)))
