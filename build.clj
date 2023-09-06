@@ -26,7 +26,10 @@
                   :class-dir class-dir})
   (do
     (b/uber {:class-dir class-dir
-           :main main-ns
-           :uber-file uber-file
-           :basis basis})
+             :main main-ns
+             :uber-file uber-file
+             :basis basis
+             :compile-opts {:disable-locals-clearing false
+                            :elide-meta [:doc :file :line]
+                            :direct-linking true}})
     (u/log ::build-complete :info "Build complete")))

@@ -31,6 +31,9 @@
     (jdbc.connection/->pool com.zaxxer.hikari.HikariDataSource
                             {:jdbcUrl db-uri})))
 
+(defmethod ig/halt-key! ::server [_ db]
+  (.stop db))
+
 (defmethod ig/init-key ::handler [_ opts]
   (let [db (get opts ::db)]
     (handlers/root-handler db)))

@@ -12,11 +12,17 @@
             [cheshire.core :as json]
             [com.brunobonacci.mulog :as u]
             [ca.bccdc-phl.sequencing-runs.crud :as crud]
+            [ca.bccdc-phl.sequencing-runs.jsonapi :as jsonapi]
             [ca.bccdc-phl.sequencing-runs.middleware :refer [wrap-logging]]))
 
 
-(defn get-instruments-illumina
-  ""
+(defmulti get-instruments-illumina
+  "Get a list of Illumina sequencing instruments."
+  (fn [db request]
+    (get-in request [:headers "accept"])))
+
+
+(defmethod get-instruments-illumina "application/json"
   [db request]
   (cond
     (nil? (:instrument-id (:path-params request)))
@@ -37,8 +43,45 @@
                   (response))))))
 
 
-(defn create-instrument-illumina
+(defmethod get-instruments-illumina "application/vnd.api+json"
+  [db request]
+  (cond
+    (nil? (:instrument-id (:path-params request)))
+    (let [instruments (crud/read db :sequencing_instrument_illumina)]
+      (->> instruments
+           (map #(update-keys % (comp keyword name)))
+           (map #(dissoc % :pk))
+           (map #(jsonapi/to-resource % "sequencing-instrument" :instrument_id))
+           (map #(jsonapi/add-links % (jsonapi/create-link "self" (str "/sequencing-instruments/illumina/" (:id %)))))
+           (assoc {} :data)
+           (response)))
+    :else
+    (let [instrument (first (crud/read db :sequencing_instrument_illumina :instrument_id (:instrument-id (:path-params request))))]
+      (cond
+        (nil? instrument)
+        (-> (not-found "")
+            (assoc-in [:headers "Content-Type"] "application/vnd.api+json;charset=utf-8"))
+        :else (-> instrument
+                  (update-keys (comp keyword name))
+                  (dissoc :pk)
+                  (jsonapi/to-resource "sequencing-instrument" :instrument_id)
+                  (as-> resource (jsonapi/add-links resource [(jsonapi/create-link "self" (str "/sequencing-instruments/illumina/" (:id resource)))]))
+                  (as-> data (assoc {} :data data))
+                  (response))))))
+
+
+(defmethod get-instruments-illumina "*/*"
+  [db request]
+  (get-instruments-illumina db (assoc-in request [:headers "accept"] "application/json")))
+
+
+(defmulti create-instrument-illumina
   ""
+  (fn [db request]
+    (get-in request [:headers "content-type"])))
+
+
+(defmethod create-instrument-illumina "application/json"
   [db request]
   (let [request-body (json/parse-string (slurp (:body request)) true)]
     (cond
@@ -60,8 +103,34 @@
                        (dissoc :pk))}))))))
 
 
+(defmethod create-instrument-illumina "application/vnd.api+json"
+  [db request]
+  (let [request-body (json/parse-string (slurp (:body request)) true)]
+    (cond
+      (nil? (get-in request-body [:data :attributes :instrument_id]))
+      {:status 400 :body nil}
+      :else
+      (do
+        (->> request-body
+             (#(get-in % [:data :attributes]))
+             (crud/create! db :sequencing_instrument_illumina :instrument_id))
+        (let [inserted-instrument (first (crud/read db :sequencing_instrument_illumina :instrument_id (get-in request-body [:data :attributes :instrument_id])))]
+          (cond
+            (nil? inserted-instrument)
+            {:status 500 :body nil}
+            :else
+            {:status 201
+             :headers {"Location" (str "/sequencing-instruments/illumina/" (:sequencing_instrument_illumina/instrument_id inserted-instrument))}
+             :body (-> inserted-instrument
+                       (update-keys (comp keyword name))
+                       (dissoc :pk)
+                       (jsonapi/to-resource "sequencing-instrument" :instrument_id)
+                       (as-> resource (jsonapi/add-links resource [(jsonapi/create-link "self" (str "/sequencing-instruments/illumina/" (:id resource)))]))
+                       (as-> data (assoc {} :data data)))}))))))
+
+
 (defn delete-instrument-illumina
-  ""
+  "Delete an Illumina sequencing instrument."
   [db request]
   (let [instrument-id (-> request :path-params :instrument-id)]
     (->> instrument-id
@@ -69,14 +138,63 @@
          (response))))
 
 
-(defn get-instruments-nanopore
-  ""
+(defmulti get-instruments-nanopore
+  "Get Nanopore sequencing instruments."
+  (fn [db request]
+    (get-in request [:headers "accept"])))
+
+
+(defmethod get-instruments-nanopore "application/json"
   [db request]
-  (let [instruments (crud/read db :sequencing_instrument_nanopore)]
-    (->> instruments
-         (map #(update-keys % (comp keyword name)))
-         (map #(dissoc % :pk))
-         (response))))
+  (cond
+    (nil? (:instrument-id (:path-params request)))
+    (let [instruments (crud/read db :sequencing_instrument_nanopore)]
+      (->> instruments
+           (map #(update-keys % (comp keyword name)))
+           (map #(dissoc % :pk))
+           (response)))
+    :else
+    (let [instrument (first (crud/read db :sequencing_instrument_nanopore :instrument_id (:instrument-id (:path-params request))))]
+      (cond
+        (nil? instrument)
+        (-> (not-found "")
+            (assoc-in [:headers "Content-Type"] "application/json;charset=utf-8"))
+        :else (-> instrument
+                  (update-keys (comp keyword name))
+                  (dissoc :pk)
+                  (response))))))
+
+
+(defmethod get-instruments-nanopore "application/vnd.api+json"
+  [db request]
+  (cond
+    (nil? (:instrument-id (:path-params request)))
+    (let [instruments (crud/read db :sequencing_instrument_nanopore)]
+      (->> instruments
+           (map #(update-keys % (comp keyword name)))
+           (map #(dissoc % :pk))
+           (map #(jsonapi/to-resource % "sequencing-instrument" :instrument_id))
+           (map #(jsonapi/add-links % (jsonapi/create-link "self" (str "/sequencing-instruments/nanopore/" (:id %)))))
+           (assoc {} :data)
+           (response)))
+    :else
+    (let [instrument (first (crud/read db :sequencing_instrument_nanopore :instrument_id (:instrument-id (:path-params request))))]
+      (cond
+        (nil? instrument)
+        (-> (not-found "")
+            (assoc-in [:headers "Content-Type"] "application/vnd.api+json;charset=utf-8"))
+        :else (-> instrument
+                  (update-keys (comp keyword name))
+                  (dissoc :pk)
+                  (jsonapi/to-resource "sequencing-instrument" :instrument_id)
+                  (as-> resource (jsonapi/add-links resource [(jsonapi/create-link "self" (str "/sequencing-instruments/nanopore/" (:id resource)))]))
+                  (as-> data (assoc {} :data data))
+                  (response))))))
+
+
+(defmethod get-instruments-nanopore "*/*"
+  [db request]
+  (get-instruments-nanopore db (assoc-in request [:headers "accept"] "application/json")))
 
 
 (defn create-instrument-nanopore
@@ -105,7 +223,7 @@
                      :basePath "/"}
            :handler (reitit.swagger/create-swagger-handler)}}]
    ["/sequencing-instruments/illumina"
-    {:get {:handler (wrap-logging (fn [request] (get-instruments-illumina db request)))}
+    {:get {:handler (fn [request] (get-instruments-illumina db request))}
      :post {:handler (fn [request] (create-instrument-illumina db request))}}]
    ["/sequencing-instruments/illumina/:instrument-id"
     {:get {:handler (fn [request] (get-instruments-illumina db request))}
